@@ -2,11 +2,15 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>3D 瓶中微縮世界 — 海盜船與海洋</title>
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
   <link rel="stylesheet" href="https://fonts.acghub.net/css?family=Fusion+Pixel" />
   <style>
-/* style.css — Ultra-Clean Single-Line Nautical Parchment & Brass UI + Mobile Responsive Layout */
+/* style.css — Nautical Parchment UI + Responsive Layout */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -29,11 +33,16 @@ html, body {
   color: #2b2118;
 }
 
+/* Short labels hidden on desktop; long labels hidden on small screens */
+.txt-short { display: none; }
+.txt-long { display: inline; }
+
 #canvas-container {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
   cursor: grab;
   touch-action: none;
 }
@@ -42,12 +51,18 @@ html, body {
   cursor: grabbing;
 }
 
+#canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 /* Top-Left Subtle Title & Camera Preset Bar */
 #top-bar {
   position: fixed;
-  top: 10px;
-  left: 14px;
-  right: 14px;
+  top: max(10px, env(safe-area-inset-top, 0px));
+  left: max(14px, env(safe-area-inset-left, 0px));
+  right: max(14px, env(safe-area-inset-right, 0px));
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -67,6 +82,7 @@ html, body {
   padding: 6px 12px;
   color: #f3ead8;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.42);
+  max-width: min(100%, 420px);
 }
 
 .brand-badge h1 {
@@ -75,12 +91,14 @@ html, body {
   letter-spacing: 0.04em;
   color: #f2c96d;
   margin-bottom: 1px;
+  line-height: 1.35;
 }
 
-.brand-badge p {
+.brand-badge .brand-sub {
   font-size: 12px;
   color: #cbbba0;
   letter-spacing: 0;
+  line-height: 1.3;
 }
 
 .camera-bar {
@@ -88,6 +106,7 @@ html, body {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
+  justify-content: flex-end;
   background: rgba(24, 18, 14, 0.74);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -95,6 +114,7 @@ html, body {
   border-radius: 5px;
   padding: 5px 7px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.42);
+  max-width: min(100%, 720px);
 }
 
 .cam-btn {
@@ -102,12 +122,14 @@ html, body {
   color: #e8dcc4;
   border: 1px solid rgba(212, 169, 66, 0.32);
   border-radius: 3px;
-  padding: 3px 8px;
+  padding: 4px 8px;
+  min-height: 28px;
   font-size: 12px;
   font-family: inherit;
   font-weight: 400;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
 }
 
 .cam-btn:hover {
@@ -125,10 +147,10 @@ html, body {
 /* Bottom Compact Nautical Parchment Control Dock */
 #ui-wrapper {
   position: fixed;
-  bottom: 8px;
+  bottom: max(8px, env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
-  width: min(1040px, calc(100vw - 16px));
+  width: min(1040px, calc(100% - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
   z-index: 30;
   pointer-events: none;
   display: flex;
@@ -141,6 +163,7 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   color: rgba(236, 224, 200, 0.85);
   font-size: 12px;
   line-height: 1.4;
@@ -150,16 +173,24 @@ html, body {
   pointer-events: auto;
 }
 
+.hint-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .toggle-ui-btn {
+  flex: 0 0 auto;
   background: rgba(28, 20, 14, 0.84);
   color: #e8cf96;
   border: 1px solid rgba(212, 169, 66, 0.45);
   border-radius: 3px;
-  padding: 2px 8px;
+  padding: 4px 10px;
+  min-height: 28px;
   font-size: 12px;
   font-family: inherit;
   font-weight: 400;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 #ui-dock {
@@ -174,9 +205,12 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  transition: max-height 0.25s ease, opacity 0.22s ease, padding 0.22s ease;
-  max-height: 220px;
-  overflow: hidden;
+  transition: max-height 0.25s ease, opacity 0.22s ease, padding 0.22s ease, border-width 0.22s ease;
+  max-height: min(42vh, 320px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 #ui-dock.collapsed {
@@ -184,7 +218,9 @@ html, body {
   padding-top: 0;
   padding-bottom: 0;
   border-width: 0;
+  outline-width: 0;
   opacity: 0;
+  overflow: hidden;
 }
 
 .dock-row {
@@ -192,7 +228,7 @@ html, body {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .dock-row + .dock-row {
@@ -204,11 +240,17 @@ html, body {
   display: flex;
   align-items: center;
   gap: 5px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .control-group.grow {
-  flex: 1 1 auto;
+  flex: 1 1 220px;
+  min-width: min(100%, 220px);
+}
+
+.wave-group {
+  flex: 0 1 180px;
 }
 
 .ctrl-label {
@@ -224,7 +266,7 @@ html, body {
   font-size: 12px;
   font-weight: 400;
   color: #241a10;
-  min-width: 32px;
+  min-width: 36px;
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -233,48 +275,111 @@ input[type="range"].nautical-slider {
   -webkit-appearance: none;
   appearance: none;
   flex: 1 1 80px;
-  min-width: 65px;
-  height: 5px;
-  border-radius: 3px;
+  min-width: 64px;
+  width: auto;
+  height: 12px;
+  border-radius: 0;
   outline: none;
   cursor: pointer;
-  border: 1px solid rgba(60, 44, 28, 0.35);
+  border: 2px solid #5c4932;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 248, 230, 0.45),
+    inset -1px -1px 0 rgba(40, 28, 16, 0.35),
+    1px 1px 0 rgba(255, 255, 255, 0.35);
+  image-rendering: pixelated;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
+input[type="range"].wave-slider {
+  flex: 1 1 72px;
+  min-width: 72px;
+  max-width: 120px;
+}
+
+/* Stepped pixel bands (day cycle / wave intensity) */
 #hourSlider {
-  background: linear-gradient(90deg,
-    #182338 0%,
-    #d97b48 24%,
-    #88c9f2 48%,
-    #e87a3d 76%,
-    #182338 100%
+  background-image: linear-gradient(90deg,
+    #182338 0 12.5%,
+    #4a2f58 12.5% 25%,
+    #d97b48 25% 37.5%,
+    #88c9f2 37.5% 50%,
+    #f0c86a 50% 62.5%,
+    #e87a3d 62.5% 75%,
+    #3a2a4a 75% 87.5%,
+    #182338 87.5% 100%
   );
 }
 
 #waveSlider {
-  background: linear-gradient(90deg, #74c7e5 0%, #1d6fa3 55%, #0b2d4d 100%);
+  background-image: linear-gradient(90deg,
+    #9ad8ef 0 20%,
+    #4aa8d4 20% 40%,
+    #1d6fa3 40% 60%,
+    #14507a 60% 80%,
+    #0b2d4d 80% 100%
+  );
 }
 
+input[type="range"].nautical-slider::-webkit-slider-runnable-track {
+  height: 12px;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+}
+
+input[type="range"].nautical-slider::-moz-range-track {
+  height: 12px;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+}
+
+/* Pixel brass block thumb — matches parchment buttons */
 input[type="range"].nautical-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: #f7f2e7;
+  width: 14px;
+  height: 20px;
+  margin-top: -6px;
+  border-radius: 0;
+  background:
+    linear-gradient(180deg, #fff6df 0 30%, #e8cf96 30% 70%, #b8924a 70% 100%);
   border: 2px solid #2b2118;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    inset 1px 1px 0 #fffaf0,
+    inset -1px -1px 0 #8a7040,
+    2px 2px 0 rgba(0, 0, 0, 0.28);
   cursor: pointer;
+  image-rendering: pixelated;
 }
 
 input[type="range"].nautical-slider::-moz-range-thumb {
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: #f7f2e7;
+  width: 14px;
+  height: 20px;
+  border-radius: 0;
+  background:
+    linear-gradient(180deg, #fff6df 0 30%, #e8cf96 30% 70%, #b8924a 70% 100%);
   border: 2px solid #2b2118;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    inset 1px 1px 0 #fffaf0,
+    inset -1px -1px 0 #8a7040,
+    2px 2px 0 rgba(0, 0, 0, 0.28);
   cursor: pointer;
+}
+
+input[type="range"].nautical-slider:active::-webkit-slider-thumb,
+input[type="range"].nautical-slider:focus::-webkit-slider-thumb {
+  background:
+    linear-gradient(180deg, #ffe9b0 0 30%, #d4a942 30% 70%, #9a6f28 70% 100%);
+  border-color: #140f0a;
+}
+
+input[type="range"].nautical-slider:active::-moz-range-thumb,
+input[type="range"].nautical-slider:focus::-moz-range-thumb {
+  background:
+    linear-gradient(180deg, #ffe9b0 0 30%, #d4a942 30% 70%, #9a6f28 70% 100%);
+  border-color: #140f0a;
 }
 
 .parch-btn {
@@ -282,12 +387,13 @@ input[type="range"].nautical-slider::-moz-range-thumb {
   color: #2b2118;
   border: 1px solid #9e8a6b;
   border-radius: 2px;
-  padding: 3px 6.5px;
+  padding: 4px 7px;
+  min-height: 28px;
   font-size: 12px;
   font-family: inherit;
   font-weight: 400;
   cursor: pointer;
-  transition: all 0.14s ease;
+  transition: background 0.14s ease, border-color 0.14s ease, transform 0.14s ease;
   white-space: nowrap;
 }
 
@@ -321,34 +427,208 @@ input[type="range"].nautical-slider::-moz-range-thumb {
 .btn-group {
   display: flex;
   gap: 4px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
-@media (max-width: 920px) {
-  .dock-row, .control-group, .btn-group {
-    flex-wrap: wrap;
+/* —— Tablet —— */
+@media (max-width: 1100px) {
+  #ui-wrapper {
+    width: calc(100% - 12px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
   }
+
+  .control-group.grow {
+    flex: 1 1 100%;
+  }
+
+  .wave-group {
+    flex: 1 1 auto;
+  }
+
+  input[type="range"].wave-slider {
+    max-width: none;
+  }
+}
+
+/* —— Compact tablet / large phone —— */
+@media (max-width: 820px) {
+  .txt-short { display: inline; }
+  .txt-long { display: none; }
+
   #top-bar {
-    top: 6px;
-    left: 6px;
-    right: 6px;
+    top: max(6px, env(safe-area-inset-top, 0px));
+    left: max(6px, env(safe-area-inset-left, 0px));
+    right: max(6px, env(safe-area-inset-right, 0px));
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
   }
+
   .brand-badge {
-    padding: 4px 8px;
+    max-width: none;
+    width: fit-content;
+    padding: 5px 10px;
   }
-  .brand-badge h1 {
-    font-size: 12px;
-  }
-  .brand-badge p, .helper-caption span.desktop-hint {
+
+  .brand-badge .brand-sub {
     display: none;
   }
-  #ui-dock {
-    padding: 6px 8px;
-    gap: 5px;
+
+  .camera-bar {
+    max-width: none;
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212, 169, 66, 0.45) transparent;
   }
+
+  .camera-bar::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .camera-bar::-webkit-scrollbar-thumb {
+    background: rgba(212, 169, 66, 0.45);
+    border-radius: 2px;
+  }
+
+  .cam-btn {
+    flex: 0 0 auto;
+    min-height: 32px;
+    padding: 5px 10px;
+  }
+
+  #ui-wrapper {
+    bottom: max(6px, env(safe-area-inset-bottom, 0px));
+    width: calc(100% - 10px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  }
+
+  .helper-caption {
+    margin-bottom: 5px;
+  }
+
+  #ui-dock {
+    padding: 8px;
+    gap: 8px;
+    max-height: min(48vh, 360px);
+  }
+
+  .dock-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .dock-row + .dock-row {
+    padding-top: 8px;
+  }
+
+  .control-group,
+  .control-group.grow,
+  .wave-group {
+    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .btn-group {
+    width: 100%;
+  }
+
+  .btn-group .parch-btn {
+    flex: 1 1 calc(50% - 4px);
+    text-align: center;
+    min-height: 34px;
+  }
+
   .parch-btn {
-    padding: 3px 6px;
+    min-height: 32px;
+    padding: 5px 8px;
+  }
+
+  input[type="range"].nautical-slider {
+    height: 14px;
+  }
+
+  input[type="range"].nautical-slider::-webkit-slider-runnable-track,
+  input[type="range"].nautical-slider::-moz-range-track {
+    height: 14px;
+  }
+
+  input[type="range"].nautical-slider::-webkit-slider-thumb {
+    width: 16px;
+    height: 22px;
+    margin-top: -6px;
+  }
+
+  input[type="range"].nautical-slider::-moz-range-thumb {
+    width: 16px;
+    height: 22px;
+  }
+}
+
+/* —— Phone —— */
+@media (max-width: 520px) {
+  #ui-dock {
+    max-height: min(52vh, 420px);
+    padding: 7px;
+  }
+
+  .btn-group .parch-btn {
+    flex: 1 1 calc(50% - 3px);
     font-size: 12px;
+  }
+
+  .helper-caption {
+    align-items: flex-start;
+  }
+
+  .toggle-ui-btn {
+    min-height: 32px;
+  }
+}
+
+/* —— Very small / landscape short —— */
+@media (max-height: 500px) {
+  #ui-dock {
+    max-height: min(58vh, 260px);
+  }
+
+  .brand-badge .brand-sub {
+    display: none;
+  }
+}
+
+@media (max-width: 820px) and (orientation: landscape) {
+  #top-bar {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+  }
+
+  .brand-badge {
+    flex: 0 0 auto;
+  }
+
+  .camera-bar {
+    flex: 1 1 auto;
+    width: auto;
+  }
+
+  #ui-dock {
+    max-height: min(55vh, 220px);
+  }
+
+  .dock-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .control-group {
+    width: auto;
+    flex: 1 1 auto;
   }
 }
 
@@ -363,53 +643,59 @@ input[type="range"].nautical-slider::-moz-range-thumb {
   <!-- Top Bar: Title & Quick Camera View Presets -->
   <header id="top-bar">
     <div class="brand-badge">
-      <h1>SHIP IN A BOTTLE · 3D 瓶中微縮世界</h1>
-      <p>Voxel / Low-Poly Real-Time WebGL Diorama</p>
+      <h1>
+        <span class="txt-long">SHIP IN A BOTTLE · 3D 瓶中微縮世界</span>
+        <span class="txt-short">瓶中微縮世界</span>
+      </h1>
+      <p class="brand-sub">Voxel / Low-Poly Real-Time WebGL Diorama</p>
     </div>
 
     <div class="camera-bar" role="toolbar" aria-label="視角切換">
       <button class="cam-btn active" data-camera="front">正面全景</button>
-      <button class="cam-btn" data-camera="ship">海盜船特寫</button>
-      <button class="cam-btn" data-camera="lighthouse">燈塔與瀑布</button>
-      <button class="cam-btn" data-camera="underwater">海底珊瑚礁</button>
-      <button class="cam-btn" data-camera="neck">瓶口視角</button>
-      <button class="cam-btn" id="btnSlowOrbit">🎥 自動環繞</button>
-      <button class="cam-btn" id="btnAudio">🔇 海浪音效：關</button>
+      <button class="cam-btn" data-camera="ship"><span class="txt-long">海盜船特寫</span><span class="txt-short">海盜船</span></button>
+      <button class="cam-btn" data-camera="lighthouse"><span class="txt-long">燈塔與瀑布</span><span class="txt-short">燈塔</span></button>
+      <button class="cam-btn" data-camera="underwater"><span class="txt-long">海底珊瑚礁</span><span class="txt-short">海底</span></button>
+      <button class="cam-btn" data-camera="neck"><span class="txt-long">瓶口視角</span><span class="txt-short">瓶口</span></button>
+      <button class="cam-btn" id="btnSlowOrbit"><span class="txt-long">🎥 自動環繞</span><span class="txt-short">🎥 環繞</span></button>
+      <button class="cam-btn" id="btnAudio"><span class="txt-long">🔇 海浪音效：關</span><span class="txt-short">🔇 音效</span></button>
     </div>
   </header>
 
   <!-- Bottom Nautical Parchment Interactive Dock -->
   <section id="ui-wrapper">
     <div class="helper-caption">
-      <span>
-        點擊瓶中海面可投下許願石 · 拖曳畫面 360° 旋轉視角 · 滾輪或雙指縮放
-        <span class="desktop-hint"> · Drag to orbit · Tap sea to drop a pebble · Scroll/pinch to zoom</span>
+      <span class="hint-text">
+        <span class="txt-long">點擊瓶中海面可投下許願石 · 拖曳畫面 360° 旋轉視角 · 滾輪或雙指縮放 · Drag to orbit · Tap sea to drop a pebble · Scroll/pinch to zoom</span>
+        <span class="txt-short">點擊海面投石 · 拖曳旋轉 · 雙指縮放</span>
       </span>
-      <button class="toggle-ui-btn" id="btnToggleUI">▼ 收合面板</button>
+      <button class="toggle-ui-btn" id="btnToggleUI">▼ 收合</button>
     </div>
 
     <div id="ui-dock">
       <!-- Row 1: Day/Night Time Slider + Weather Mode + Wave Intensity Slider -->
       <div class="dock-row">
         <div class="control-group grow">
-          <span class="ctrl-label">HOUR · 時間</span>
+          <span class="ctrl-label"><span class="txt-long">HOUR · 時間</span><span class="txt-short">時間</span></span>
           <input type="range" id="hourSlider" class="nautical-slider" min="0" max="24" step="0.05" value="11.27" />
           <span class="ctrl-value" id="hourDisplay">11:16</span>
-          <button class="parch-btn" id="btnAutoTime" title="自動日夜循環">日夜流轉 · Let the days pass</button>
+          <button class="parch-btn" id="btnAutoTime" title="自動日夜循環">
+            <span class="txt-long">日夜流轉 · Let the days pass</span>
+            <span class="txt-short">日夜流轉</span>
+          </button>
         </div>
 
         <div class="control-group">
-          <span class="ctrl-label">WEATHER · 天氣</span>
+          <span class="ctrl-label"><span class="txt-long">WEATHER · 天氣</span><span class="txt-short">天氣</span></span>
           <div class="btn-group">
-            <button class="parch-btn active" data-weather="sunny">☀ 晴天 CALM</button>
-            <button class="parch-btn" data-weather="rainy">🌧 雨天 BREEZE</button>
-            <button class="parch-btn" data-weather="stormy">⛈ 暴風雨 SQUALL</button>
+            <button class="parch-btn active" data-weather="sunny"><span class="txt-long">☀ 晴天 CALM</span><span class="txt-short">☀ 晴天</span></button>
+            <button class="parch-btn" data-weather="rainy"><span class="txt-long">🌧 雨天 BREEZE</span><span class="txt-short">🌧 雨天</span></button>
+            <button class="parch-btn" data-weather="stormy"><span class="txt-long">⛈ 暴風雨 SQUALL</span><span class="txt-short">⛈ 暴風雨</span></button>
           </div>
         </div>
 
-        <div class="control-group">
-          <span class="ctrl-label">WAVE · 海浪</span>
-          <input type="range" id="waveSlider" class="nautical-slider" style="width: 82px; flex: 0 0 82px;" min="0" max="100" step="1" value="42" />
+        <div class="control-group wave-group">
+          <span class="ctrl-label"><span class="txt-long">WAVE · 海浪</span><span class="txt-short">海浪</span></span>
+          <input type="range" id="waveSlider" class="nautical-slider wave-slider" min="0" max="100" step="1" value="42" />
           <span class="ctrl-value" id="waveDisplay">42%</span>
         </div>
       </div>
@@ -417,21 +703,21 @@ input[type="range"].nautical-slider::-moz-range-thumb {
       <!-- Row 2: Bottle Scene Switcher + Interactive Micro-Actions -->
       <div class="dock-row">
         <div class="control-group">
-          <span class="ctrl-label">SCENE · 場景</span>
+          <span class="ctrl-label"><span class="txt-long">SCENE · 場景</span><span class="txt-short">場景</span></span>
           <div class="btn-group">
-            <button class="parch-btn active" data-scene="pirate">🏴‍☠️ 海盜船與燈塔</button>
-            <button class="parch-btn" data-scene="ghost">👻 幽靈船與火山</button>
-            <button class="parch-btn" data-scene="viking">❄️ 極光與維京船</button>
-            <button class="parch-btn" data-scene="oriental">🌸 寶船與櫻花島</button>
+            <button class="parch-btn active" data-scene="pirate"><span class="txt-long">🏴‍☠️ 海盜船與燈塔</span><span class="txt-short">🏴‍☠️ 海盜</span></button>
+            <button class="parch-btn" data-scene="ghost"><span class="txt-long">👻 幽靈船與火山</span><span class="txt-short">👻 幽靈</span></button>
+            <button class="parch-btn" data-scene="viking"><span class="txt-long">❄️ 極光與維京船</span><span class="txt-short">❄️ 極光</span></button>
+            <button class="parch-btn" data-scene="oriental"><span class="txt-long">🌸 寶船與櫻花島</span><span class="txt-short">🌸 寶船</span></button>
           </div>
         </div>
 
         <div class="control-group">
           <div class="btn-group">
-            <button class="parch-btn danger-accent" id="btnFireCannon">🔥 開砲 Fire a cannon</button>
-            <button class="parch-btn" id="btnCallDolphins">🐬 召喚海豚 Call dolphins</button>
-            <button class="parch-btn" id="btnRockBottle">🍾 搖晃瓶身 Rock bottle</button>
-            <button class="parch-btn" id="btnTossBarrel">🛢️ 投擲木桶 Toss barrel</button>
+            <button class="parch-btn danger-accent" id="btnFireCannon"><span class="txt-long">🔥 開砲 Fire a cannon</span><span class="txt-short">🔥 開砲</span></button>
+            <button class="parch-btn" id="btnCallDolphins"><span class="txt-long">🐬 召喚海豚 Call dolphins</span><span class="txt-short">🐬 海豚</span></button>
+            <button class="parch-btn" id="btnRockBottle"><span class="txt-long">🍾 搖晃瓶身 Rock bottle</span><span class="txt-short">🍾 搖晃</span></button>
+            <button class="parch-btn" id="btnTossBarrel"><span class="txt-long">🛢️ 投擲木桶 Toss barrel</span><span class="txt-short">🛢️ 木桶</span></button>
           </div>
         </div>
       </div>
@@ -803,15 +1089,20 @@ input[type="range"].nautical-slider::-moz-range-thumb {
       } else {
         m.lookAt(target, this.position, this.up);
       }
-      const e = m.elements;
-      const sy = Math.sqrt(e[0] * e[0] + e[1] * e[1]);
-      if (sy > 1e-6) {
-        this.rotation.x = Math.atan2(e[6], e[10]);
-        this.rotation.y = Math.atan2(-e[2], sy);
-        this.rotation.z = Math.atan2(e[1], e[0]);
+      // Extract XYZ Euler to match Quaternion.setFromEuler (Three.js compatible).
+      // Previous extraction used a mismatched convention, so horizontal orbit
+      // drifted the view upward ("fly to the sky") and blocked sideways turns.
+      const te = m.elements;
+      const m11 = te[0], m12 = te[4], m13 = te[8];
+      const m22 = te[5], m23 = te[9];
+      const m32 = te[6], m33 = te[10];
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+      this.rotation.y = Math.asin(clamp(m13, -1, 1));
+      if (Math.abs(m13) < 0.9999999) {
+        this.rotation.x = Math.atan2(-m23, m33);
+        this.rotation.z = Math.atan2(-m12, m11);
       } else {
-        this.rotation.x = Math.atan2(-e[9], e[5]);
-        this.rotation.y = Math.atan2(-e[2], sy);
+        this.rotation.x = Math.atan2(m32, m22);
         this.rotation.z = 0;
       }
       this.quaternion.setFromEuler(this.rotation);
@@ -4592,11 +4883,15 @@ input[type="range"].nautical-slider::-moz-range-thumb {
       this.radius += (this.desiredRadius - this.radius) * this.damping;
       this.target.lerp(this.desiredTarget, this.damping);
 
+      this.phi = THREE.MathUtils.clamp(this.phi, this.minPhi, this.maxPhi);
+      this.desiredPhi = THREE.MathUtils.clamp(this.desiredPhi, this.minPhi, this.maxPhi);
+
       const sinPhi = Math.sin(this.phi);
       const cosPhi = Math.cos(this.phi);
       const sinTheta = Math.sin(this.theta);
       const cosTheta = Math.cos(this.theta);
 
+      this.camera.up.set(0, 1, 0);
       this.camera.position.set(
         this.target.x + this.radius * sinPhi * sinTheta,
         this.target.y + this.radius * cosPhi,
@@ -4889,7 +5184,9 @@ input[type="range"].nautical-slider::-moz-range-thumb {
       btnAudio.addEventListener('click', () => {
         const on = SoundFX.setEnabled(!SoundFX.isEnabled());
         btnAudio.classList.toggle('active', on);
-        btnAudio.textContent = on ? '🔊 海浪音效：開' : '🔇 海浪音效：關';
+        btnAudio.innerHTML = on
+          ? '<span class="txt-long">🔊 海浪音效：開</span><span class="txt-short">🔊 音效</span>'
+          : '<span class="txt-long">🔇 海浪音效：關</span><span class="txt-short">🔇 音效</span>';
       });
     }
 
@@ -4898,7 +5195,7 @@ input[type="range"].nautical-slider::-moz-range-thumb {
     if (btnToggleUI && uiDock) {
       btnToggleUI.addEventListener('click', () => {
         uiDock.classList.toggle('collapsed');
-        btnToggleUI.textContent = uiDock.classList.contains('collapsed') ? '▲ 展開控制面板' : '▼ 收合面板';
+        btnToggleUI.textContent = uiDock.classList.contains('collapsed') ? '▲ 展開' : '▼ 收合';
       });
     }
   }

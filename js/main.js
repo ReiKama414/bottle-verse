@@ -277,7 +277,9 @@
       btnAudio.addEventListener('click', () => {
         const on = SoundFX.setEnabled(!SoundFX.isEnabled());
         btnAudio.classList.toggle('active', on);
-        btnAudio.textContent = on ? '🔊 海浪音效：開' : '🔇 海浪音效：關';
+        btnAudio.innerHTML = on
+          ? '<span class="txt-long">🔊 海浪音效：開</span><span class="txt-short">🔊 音效</span>'
+          : '<span class="txt-long">🔇 海浪音效：關</span><span class="txt-short">🔇 音效</span>';
       });
     }
 
@@ -286,7 +288,7 @@
     if (btnToggleUI && uiDock) {
       btnToggleUI.addEventListener('click', () => {
         uiDock.classList.toggle('collapsed');
-        btnToggleUI.textContent = uiDock.classList.contains('collapsed') ? '▲ 展開控制面板' : '▼ 收合面板';
+        btnToggleUI.textContent = uiDock.classList.contains('collapsed') ? '▲ 展開' : '▼ 收合';
       });
     }
   }

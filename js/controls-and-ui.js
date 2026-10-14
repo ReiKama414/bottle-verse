@@ -169,11 +169,15 @@
       this.radius += (this.desiredRadius - this.radius) * this.damping;
       this.target.lerp(this.desiredTarget, this.damping);
 
+      this.phi = THREE.MathUtils.clamp(this.phi, this.minPhi, this.maxPhi);
+      this.desiredPhi = THREE.MathUtils.clamp(this.desiredPhi, this.minPhi, this.maxPhi);
+
       const sinPhi = Math.sin(this.phi);
       const cosPhi = Math.cos(this.phi);
       const sinTheta = Math.sin(this.theta);
       const cosTheta = Math.cos(this.theta);
 
+      this.camera.up.set(0, 1, 0);
       this.camera.position.set(
         this.target.x + this.radius * sinPhi * sinTheta,
         this.target.y + this.radius * cosPhi,

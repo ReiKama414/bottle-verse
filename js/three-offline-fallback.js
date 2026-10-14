@@ -362,15 +362,20 @@
       } else {
         m.lookAt(target, this.position, this.up);
       }
-      const e = m.elements;
-      const sy = Math.sqrt(e[0] * e[0] + e[1] * e[1]);
-      if (sy > 1e-6) {
-        this.rotation.x = Math.atan2(e[6], e[10]);
-        this.rotation.y = Math.atan2(-e[2], sy);
-        this.rotation.z = Math.atan2(e[1], e[0]);
+      // Extract XYZ Euler to match Quaternion.setFromEuler (Three.js compatible).
+      // Previous extraction used a mismatched convention, so horizontal orbit
+      // drifted the view upward ("fly to the sky") and blocked sideways turns.
+      const te = m.elements;
+      const m11 = te[0], m12 = te[4], m13 = te[8];
+      const m22 = te[5], m23 = te[9];
+      const m32 = te[6], m33 = te[10];
+      const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+      this.rotation.y = Math.asin(clamp(m13, -1, 1));
+      if (Math.abs(m13) < 0.9999999) {
+        this.rotation.x = Math.atan2(-m23, m33);
+        this.rotation.z = Math.atan2(-m12, m11);
       } else {
-        this.rotation.x = Math.atan2(-e[9], e[5]);
-        this.rotation.y = Math.atan2(-e[2], sy);
+        this.rotation.x = Math.atan2(m32, m22);
         this.rotation.z = 0;
       }
       this.quaternion.setFromEuler(this.rotation);
