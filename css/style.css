@@ -12,7 +12,12 @@ html, body {
   height: 100%;
   overflow: hidden;
   background-color: #161210;
-  font-family: 'Courier New', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', monospace, sans-serif;
+  font-family: 'fusion-pixel-zh-hant', 'fusion-pixel-latin', 'Courier New', monospace;
+  font-weight: 400;
+  font-synthesis: none;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  font-smooth: never;
   color: #2b2118;
 }
 
@@ -57,17 +62,17 @@ html, body {
 }
 
 .brand-badge h1 {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
   color: #f2c96d;
   margin-bottom: 1px;
 }
 
 .brand-badge p {
-  font-size: 10.5px;
+  font-size: 12px;
   color: #cbbba0;
-  letter-spacing: 0.03em;
+  letter-spacing: 0;
 }
 
 .camera-bar {
@@ -90,8 +95,9 @@ html, body {
   border: 1px solid rgba(212, 169, 66, 0.32);
   border-radius: 3px;
   padding: 3px 8px;
-  font-size: 11px;
+  font-size: 12px;
   font-family: inherit;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -105,7 +111,7 @@ html, body {
   background: #d4a942;
   color: #1e140b;
   border-color: #f5d173;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 /* Bottom Compact Nautical Parchment Control Dock */
@@ -128,8 +134,8 @@ html, body {
   justify-content: space-between;
   align-items: center;
   color: rgba(236, 224, 200, 0.85);
-  font-size: 10.5px;
-  line-height: 1.3;
+  font-size: 12px;
+  line-height: 1.4;
   margin-bottom: 4px;
   padding: 0 4px;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
@@ -142,8 +148,9 @@ html, body {
   border: 1px solid rgba(212, 169, 66, 0.45);
   border-radius: 3px;
   padding: 2px 8px;
-  font-size: 10.5px;
+  font-size: 12px;
   font-family: inherit;
+  font-weight: 400;
   cursor: pointer;
 }
 
@@ -197,17 +204,17 @@ html, body {
 }
 
 .ctrl-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
   color: #594734;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
 .ctrl-value {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 400;
   color: #241a10;
   min-width: 32px;
   text-align: right;
@@ -268,9 +275,9 @@ input[type="range"].nautical-slider::-moz-range-thumb {
   border: 1px solid #9e8a6b;
   border-radius: 2px;
   padding: 3px 6.5px;
-  font-size: 10.5px;
+  font-size: 12px;
   font-family: inherit;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.14s ease;
   white-space: nowrap;
@@ -322,7 +329,7 @@ input[type="range"].nautical-slider::-moz-range-thumb {
     padding: 4px 8px;
   }
   .brand-badge h1 {
-    font-size: 11.5px;
+    font-size: 12px;
   }
   .brand-badge p, .helper-caption span.desktop-hint {
     display: none;
@@ -333,6 +340,6 @@ input[type="range"].nautical-slider::-moz-range-thumb {
   }
   .parch-btn {
     padding: 3px 6px;
-    font-size: 10px;
+    font-size: 12px;
   }
 }
