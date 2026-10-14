@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>3D 瓶中微縮世界 — 海盜船與海洋</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Load Three.js engine immediately with zero network blocking (compatible with Three.js r128+ & WebGL2) -->
+  <script src="js/three-offline-fallback.js"></script>
+</head>
+<body>
+  <!-- 3D WebGL Viewport -->
+  <div id="canvas-container"></div>
+
+  <!-- Top Bar: Title & Quick Camera View Presets -->
+  <header id="top-bar">
+    <div class="brand-badge">
+      <h1>SHIP IN A BOTTLE · 3D 瓶中微縮世界</h1>
+      <p>Voxel / Low-Poly Real-Time WebGL Diorama</p>
+    </div>
+
+    <div class="camera-bar" role="toolbar" aria-label="視角切換">
+      <button class="cam-btn active" data-camera="front">正面全景</button>
+      <button class="cam-btn" data-camera="ship">海盜船特寫</button>
+      <button class="cam-btn" data-camera="lighthouse">燈塔與瀑布</button>
+      <button class="cam-btn" data-camera="underwater">海底珊瑚礁</button>
+      <button class="cam-btn" data-camera="neck">瓶口視角</button>
+      <button class="cam-btn" id="btnSlowOrbit">🎥 自動環繞</button>
+      <button class="cam-btn" id="btnAudio">🔇 海浪音效：關</button>
+    </div>
+  </header>
+
+  <!-- Bottom Nautical Parchment Interactive Dock -->
+  <section id="ui-wrapper">
+    <div class="helper-caption">
+      <span>
+        點擊瓶中海面可投下許願石 · 拖曳畫面 360° 旋轉視角 · 滾輪或雙指縮放
+        <span class="desktop-hint"> · Drag to orbit · Tap sea to drop a pebble · Scroll/pinch to zoom</span>
+      </span>
+      <button class="toggle-ui-btn" id="btnToggleUI">▼ 收合面板</button>
+    </div>
+
+    <div id="ui-dock">
+      <!-- Row 1: Day/Night Time Slider + Weather Mode + Wave Intensity Slider -->
+      <div class="dock-row">
+        <div class="control-group grow">
+          <span class="ctrl-label">HOUR · 時間</span>
+          <input type="range" id="hourSlider" class="nautical-slider" min="0" max="24" step="0.05" value="11.27" />
+          <span class="ctrl-value" id="hourDisplay">11:16</span>
+          <button class="parch-btn" id="btnAutoTime" title="自動日夜循環">日夜流轉 · Let the days pass</button>
+        </div>
+
+        <div class="control-group">
+          <span class="ctrl-label">WEATHER · 天氣</span>
+          <div class="btn-group">
+            <button class="parch-btn active" data-weather="sunny">☀ 晴天 CALM</button>
+            <button class="parch-btn" data-weather="rainy">🌧 雨天 BREEZE</button>
+            <button class="parch-btn" data-weather="stormy">⛈ 暴風雨 SQUALL</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <span class="ctrl-label">WAVE · 海浪</span>
+          <input type="range" id="waveSlider" class="nautical-slider" style="width: 82px; flex: 0 0 82px;" min="0" max="100" step="1" value="42" />
+          <span class="ctrl-value" id="waveDisplay">42%</span>
+        </div>
+      </div>
+
+      <!-- Row 2: Bottle Scene Switcher + Interactive Micro-Actions -->
+      <div class="dock-row">
+        <div class="control-group">
+          <span class="ctrl-label">SCENE · 場景</span>
+          <div class="btn-group">
+            <button class="parch-btn active" data-scene="pirate">🏴‍☠️ 海盜船與燈塔</button>
+            <button class="parch-btn" data-scene="ghost">👻 幽靈船與火山</button>
+            <button class="parch-btn" data-scene="viking">❄️ 極光與維京船</button>
+            <button class="parch-btn" data-scene="oriental">🌸 寶船與櫻花島</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="btn-group">
+            <button class="parch-btn danger-accent" id="btnFireCannon">🔥 開砲 Fire a cannon</button>
+            <button class="parch-btn" id="btnCallDolphins">🐬 召喚海豚 Call dolphins</button>
+            <button class="parch-btn" id="btnRockBottle">🍾 搖晃瓶身 Rock bottle</button>
+            <button class="parch-btn" id="btnTossBarrel">🛢️ 投擲木桶 Toss barrel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Application Modules -->
+  <script src="js/voxel-engine.js"></script>
+  <script src="js/bottle-and-stand.js"></script>
+  <script src="js/water-and-shaders.js"></script>
+  <script src="js/scenes-builder.js"></script>
+  <script src="js/atmosphere-and-fx.js"></script>
+  <script src="js/controls-and-ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "ship-in-a-bottle-3d-voxel-world",
+  "version": "1.0.0",
+  "description": "Interactive 3D Ship in a Bottle Voxel Miniature World built with Three.js + WebGL + Custom GLSL Shaders",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "serve:python": "python3 -m http.server 8080"
+  },
+  "keywords": [
+    "threejs",
+    "webgl",
+    "voxel",
+    "ship-in-a-bottle",
+    "glsl",
+    "3d-diorama"
+  ],
+  "author": "ReiKama414 (https://github.com/ReiKama414)",
+  "license": "MIT"
+}
