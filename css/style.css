@@ -60,8 +60,15 @@ html, body {
   flex-wrap: wrap;
 }
 
-.brand-badge {
+.brand-cluster {
   pointer-events: auto;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  max-width: min(100%, 480px);
+}
+
+.brand-badge {
   background: rgba(24, 18, 14, 0.74);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -70,7 +77,45 @@ html, body {
   padding: 6px 12px;
   color: #f3ead8;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.42);
-  max-width: min(100%, 420px);
+  min-width: 0;
+}
+
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: 1 1 auto;
+  min-height: 28px;
+  background: rgba(24, 18, 14, 0.74);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(212, 169, 66, 0.42);
+  border-radius: 5px;
+  color: #e8cf96;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.42);
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.social-btn:hover,
+.social-btn:focus-visible {
+  background: rgba(212, 169, 66, 0.28);
+  color: #fff8e8;
+  border-color: #f5d173;
+  outline: none;
+}
+
+.social-btn svg {
+  display: block;
+  image-rendering: pixelated;
 }
 
 .brand-badge h1 {
@@ -451,14 +496,22 @@ input[type="range"].nautical-slider:focus::-moz-range-thumb {
     gap: 6px;
   }
 
-  .brand-badge {
+  .brand-cluster {
     max-width: none;
     width: fit-content;
+  }
+
+  .brand-badge {
     padding: 5px 10px;
   }
 
   .brand-badge .brand-sub {
     display: none;
+  }
+
+  .social-btn {
+    width: 32px;
+    min-height: 32px;
   }
 
   .camera-bar {
@@ -596,7 +649,7 @@ input[type="range"].nautical-slider:focus::-moz-range-thumb {
     align-items: flex-start;
   }
 
-  .brand-badge {
+  .brand-cluster {
     flex: 0 0 auto;
   }
 
